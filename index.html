@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>AVL Studio — Self-Balancing Tree Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">A<span>V</span>L</div><div><strong>AVL Studio</strong><small>DATA STRUCTURE LAB</small></div></div>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav-item active" data-view="visualizer"><span>◈</span> Tree Visualizer</button>
+      <button class="nav-item" data-view="learn"><span>⌘</span> AVL Concepts</button>
+      <div class="sidebar-bottom">
+        <div class="status-dot"></div><div><strong>Ready to balance</strong><small>Interactive learning mode</small></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow">ALGORITHMS / TREES</p><h1>AVL Tree <span>Visualizer</span></h1></div>
+        <div class="top-actions"><span class="live-pill"><i></i> LIVE CANVAS</span><button id="resetBtn" class="ghost-btn">↻ Reset</button></div>
+      </header>
+
+      <section id="visualizerView">
+        <div class="intro-row">
+          <div><h2>Explore self-balancing trees.</h2><p>Insert, search, and delete nodes. Watch rotations restore balance in real time.</p></div>
+          <div class="complexity-chip"><span>AVERAGE / WORST CASE</span><strong>O(log n)</strong></div>
+        </div>
+
+        <div class="workspace-grid">
+          <section class="canvas-card panel">
+            <div class="panel-head"><div><span class="section-kicker">TREE CANVAS</span><h3>Live structure</h3></div><div class="canvas-legend"><span><i class="legend-node"></i> Balanced</span><span><i class="legend-node warn"></i> Rotation</span></div></div>
+            <div class="tree-stage" id="treeStage">
+              <div class="empty-state" id="emptyState"><div class="empty-icon">⌘</div><strong>Your tree starts here</strong><p>Insert a few numbers or load a sample sequence.</p><button id="sampleBtn" class="primary-btn">Load sample tree ↗</button></div>
+              <svg id="treeSvg" role="img" aria-label="AVL tree visualization"></svg>
+            </div>
+            <div class="canvas-footer"><span id="treeSummary">0 nodes · height 0</span><span class="hint">Tip: try <kbd>30</kbd>, <kbd>20</kbd>, <kbd>10</kbd> to trigger a rotation</span></div>
+          </section>
+
+          <aside class="control-column">
+            <section class="panel control-card">
+              <div class="panel-head"><div><span class="section-kicker">OPERATIONS</span><h3>Control panel</h3></div><span class="keyboard-icon">⌨</span></div>
+              <form id="operationForm" class="input-row">
+                <input id="valueInput" type="number" placeholder="Enter an integer" aria-label="Integer value" required />
+                <button class="primary-btn" type="submit">Insert</button>
+              </form>
+              <div class="button-grid">
+                <button id="searchBtn" class="operation-btn"><span>⌕</span> Search</button>
+                <button id="deleteBtn" class="operation-btn danger"><span>−</span> Delete</button>
+              </div>
+              <div class="divider"></div>
+              <div class="quick-label">QUICK ACTIONS</div>
+              <div class="quick-actions"><button id="randomBtn" class="soft-btn">⚄ Random tree</button><button id="clearBtn" class="soft-btn">Clear all</button></div>
+              <p id="operationMessage" class="message" aria-live="polite">Ready. Add a value to begin.</p>
+            </section>
+
+            <section class="panel metrics-card">
+              <div class="panel-head"><div><span class="section-kicker">TREE HEALTH</span><h3>Live metrics</h3></div><span class="pulse">●</span></div>
+              <div class="metric-grid">
+                <div class="metric"><span>Nodes</span><strong id="nodeCount">0</strong></div>
+                <div class="metric"><span>Height</span><strong id="heightValue">0</strong></div>
+                <div class="metric"><span>Min value</span><strong id="minValue">—</strong></div>
+                <div class="metric"><span>Max value</span><strong id="maxValue">—</strong></div>
+              </div>
+              <div class="balance-status"><span class="balance-icon">✓</span><div><strong id="balanceTitle">Perfectly balanced</strong><small id="balanceDescription">Every node has a balance factor of −1, 0, or +1.</small></div></div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="panel lower-panel">
+          <div class="panel-head"><div><span class="section-kicker">INSPECT</span><h3>Traversal & balance factors</h3></div><div class="tab-group"><button class="tab active" data-traversal="inorder">In-order</button><button class="tab" data-traversal="preorder">Pre-order</button><button class="tab" data-traversal="postorder">Post-order</button></div></div>
+          <div class="inspection-grid"><div class="traversal-box"><span class="mini-label">VISIT ORDER</span><div id="traversalOutput" class="number-list">—</div></div><div class="explain-box"><span class="mini-label">BALANCE FACTOR</span><p>BF(node) = height(left subtree) − height(right subtree)</p><div class="bf-key"><span><i class="bf-good"></i> −1, 0, +1 = balanced</span><span><i class="bf-bad"></i> below −1 or above +1 = rotate</span></div></div></div>
+        </section>
+      </section>
+
+      <section id="learnView" class="panel learn-view hidden">
+        <span class="section-kicker">QUICK GUIDE</span><h2>What makes an AVL tree special?</h2>
+        <p class="learn-intro">An AVL tree is a Binary Search Tree that automatically keeps its height small after insertions and deletions.</p>
+        <div class="concept-grid">
+          <article class="concept-card"><span class="concept-number">01</span><h3>Why balance matters</h3><p>A normal BST can become a chain when values arrive in sorted order. Search may then take O(n) time. AVL balancing keeps operations at O(log n).</p></article>
+          <article class="concept-card"><span class="concept-number">02</span><h3>Balance factor</h3><p>BF = height(left) − height(right). A node is balanced when its factor is −1, 0, or +1.</p></article>
+          <article class="concept-card"><span class="concept-number">03</span><h3>Four rotations</h3><p><b>LL:</b> right rotation. <b>RR:</b> left rotation. <b>LR:</b> left rotation on the child, then right rotation. <b>RL:</b> right rotation on the child, then left rotation.</p></article>
+          <article class="concept-card"><span class="concept-number">04</span><h3>AVL vs Red-Black</h3><p>AVL trees are more strictly balanced and can suit lookup-heavy workloads. Red-Black trees allow looser balance and can perform well when updates are frequent.</p></article>
+        </div>
+        <div class="learn-note"><strong>Try this:</strong> switch back to Tree Visualizer and insert <code>30, 20, 10</code> to see an LL imbalance corrected by a right rotation.</div>
+      </section>
+      <footer><span>AVL STUDIO <b>·</b> DATA STRUCTURES PROJECT</span><span>Built for learning, not just displaying.</span></footer>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
