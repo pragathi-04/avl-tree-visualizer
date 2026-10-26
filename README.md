@@ -121,8 +121,7 @@ git init
 git add .
 git commit -m "Build Balanced BST Lab AVL visualizer"
 git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/balanced-bst-lab.git
+git remote add origin https://github.com/pragathi-04/balanced-bst-lab.git
 git push -u origin main
 ```
 
-Replace `YOUR-USERNAME` with your GitHub username.
